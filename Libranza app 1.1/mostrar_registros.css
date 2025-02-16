@@ -1,0 +1,528 @@
+/* Estilos generales */
+body {
+  font-family: 'Times New Roman', Times, serif;
+  background-color: black;
+  color: rgb(255, 255, 255);
+  margin: 0;
+  padding: 0;
+  background-size: cover;
+  font-size: 15px;
+}
+
+/* Animación de Fade In para el contenido del main */
+main {
+  padding: 20px;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+header {
+  background:black;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  animation: slideDown 1s ease-in-out;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+header h1 {
+  margin: 0;
+  font-family: cursive;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background:linear-gradient(gold,black);
+  color: white;
+}
+
+/* Animación de Slide Up para las filas de la tabla */
+tbody tr {
+  animation: slideUp 1s ease-in-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Estilos específicos para los botones */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background:linear-gradient(gold, black);
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+  background:linear-gradient(black,white);
+  transform: scale(1.05);
+}
+
+/* Animación de Bounce para las sumas */
+tfoot tr td {
+  animation: bounceIn 1s ease-in-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.5); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Estilos para el footer */
+footer {
+  background-color: transparent;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Estilos para el modal */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgb(0, 0, 0); 
+  background-color: rgba(0, 0, 0, 0.4); 
+  padding-top: 60px; 
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; 
+  box-shadow: 0 5px 15px rgba(0,0,0,.5);
+  animation: fadeInModal 0.5s ease-in-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.close-button, .close-button-alert {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus,
+.close-button-alert:hover,
+.close-button-alert:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Estilos para el modal de estimación */
+.modal-estimacion {
+  display: none; 
+  position: fixed; 
+  z-index: 2; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0, 0, 0, 0.4); 
+  padding-top: 60px; 
+}
+
+.modal-content-estimacion {
+  background-color: #fefefe;
+  margin: 5% auto; 
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; 
+  max-width: 600px; 
+  box-shadow: 0 5px 15px rgba(0,0,0,.5);
+  animation: fadeInModal 0.5s ease-in-out;
+  position: relative;
+  border-radius: 10px;
+}
+
+.close-button-estimacion {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-button-estimacion:hover,
+.close-button-estimacion:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 768px) {
+  header {
+      padding: 15px;
+  }
+  header h1 {
+      font-size: 2.2rem;
+  }
+  section.acciones {
+      flex-direction: column;
+      align-items: center;
+  }
+  button {
+      margin: 10px 0;
+  }
+  table th, table td {
+      padding: 6px;
+  }
+  .modal-content {
+      width: 90%;
+  }
+}
+header {
+  background-color: transparent;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  animation: slideDown 1s ease-in-out;
+  width: 100%; /* Añadimos esto para que ocupe el ancho completo */
+  box-sizing: border-box; /* Esto asegura que el padding no aumente el tamaño total */
+}
+
+/* Estilos para la ventana modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 10px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: rgb(170, 148, 20);
+}
+
+.modal-content p {
+  margin: 1em 0;
+}
+
+.modal-content label {
+  display: block;
+  margin: 1em 0 0.5em;
+  color: rgb(170, 148, 20);
+}
+
+.modal-content input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin: 0.5em 0;
+  border: 1px solid #292727;
+  border-radius: 10px;
+}
+
+.modal-content button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.75em 1.5em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: block;
+  margin: 1em auto 0;
+}
+
+.modal-content button:hover {
+  background-color: #45a049;
+}
+
+.modal-content #resultados-estimaciones-modal {
+  margin-top: 1em;
+}
+
+.modal-content #resultados-estimaciones-modal p {
+  margin: 0.5em 0;
+  font-weight: bold;
+  color: #333;
+}
+
+  /* Estilos para la ventana modal de confirmación */
+  .modal-confirmacion {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+  }
+
+  .modal-content-confirmacion {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+
+  .modal-content-confirmacion p {
+    font-size: 1.2em;
+    color: #333;
+    margin: 10px 0;
+  }
+
+  .modal-content-confirmacion .botones {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .modal-content-confirmacion .botones button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    background-color: #007f91;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .modal-content-confirmacion .botones button:hover {
+    background-color: #005f6f;
+    transform: scale(1.05);
+  }
+
+  .modal {
+    display: none; /* Ocultar por defecto */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.589);
+  }
+  
+  .modal-content {
+    background-color: rgb(223, 223, 223);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    margin-top: -50px;
+    color: black;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  /* Ejemplo de estilos para el total de gastos por tonelada */
+#modal-total-gastos-tonelada {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+}
+h1{color: gold;
+font-size: 35px;}
+
+ label{color: white;}
+
+ img{width: 33px;
+height: 30px;}
+
+.fila-totales {
+  background:linear-gradient(gold, black); /* Color dorado claro */
+  font-weight: bold;        /* Opcional: resalta el texto */
+}
+.abajo{ font-family: cursive;
+color: white;}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgb(32, 31, 31);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  color: #030303;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content button {
+  background: none;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dropdown-content button:hover {
+  background-color: #030303;
+}
+/* Importar iconos de Font Awesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+/* Estilos para los iconos en los botones */
+button#regresar-inicio::before {
+    content: "\f104"; /* Icono de flecha a la izquierda */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+button#descargar-registros::before {
+    content: "\f56d"; /* Icono de descarga */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+button#descargar-excel::before {
+    content: "\f1c3"; /* Icono de archivo Excel */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+    color: green;
+}
+
+button#descargar-pdf::before {
+    content: "\f1c1"; /* Icono de archivo PDF */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+    color: red;
+}
+
+button#formatear-registros::before {
+    content: "\f2ed"; /* Icono de papelera */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+    color: #d9534f;
+}
+
+button#abrir-modal::before {
+    content: "\f201"; /* Icono de gráfico */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+    color: #007bff;
+}
+
+
+/* Estilos para la tabla */
+th::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 3px;
+}
+
+th:nth-child(1)::before { content: "\f007"; } /* Icono de usuario para Vendedor */
+th:nth-child(2)::before { content: "\f291"; } /* Icono de balanza para Kilogramos */
+

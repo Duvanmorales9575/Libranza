@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrar Registros - LIBRANZA</title>
+    <link rel="stylesheet" href="mostrar_registros.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.18.5/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+
+    <style>
+        /* Estilos para la ventana modal y otros estilos específicos */
+        /* ... (tus estilos actuales) ... */
+        /* Asegúrate de agregar estilos para el nuevo elemento si es necesario */
+    </style>
+    <link rel="icon" href="RUO_7313-ca01-427d-81ea-03e13888fb7b_1737419715163.png">
+    
+</head>
+<body>
+    <header>
+        <h1> <img src="RUO_7313-ca01-427d-81ea-03e13888fb7b_1737419715163.png">LIBRANZA</h1><label>Registros</label></h1>
+        <section class="acciones">
+            <button id="regresar-inicio">Regresar al Inicio</button>
+            <h2 id="titulo-producto"></h2>
+            <div class="dropdown">
+                <button id="descargar-registros">Descargar Registros</button>
+                <div class="dropdown-content">
+                    <button id="descargar-excel">Descargar Excel</button>
+                    <button id="descargar-pdf">Descargar PDF</button>
+                </div>
+            </div>
+            
+            <button id="formatear-registros">Formatear Registros</button>
+            <button id="abrir-modal">Estimar ingresos y utilidades</button>
+        </section>
+    </header>
+    <main>
+        <section class="registros">
+            <h2>Registros Guardados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vendedor</th>
+                        <th>Kilogramos(kg)</th>
+                        <th>Precio X Kilo ($)</th>
+                        <th>Total inversión ($)</th>
+                        <!-- Columna de fecha eliminada -->
+                    </tr>
+                </thead>
+                <tbody id="registros-tbody">
+                    <!-- Aquí se generarán dinámicamente los registros -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p class="abajo">&copy; 2024 LIBRANZA</p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="modalEstimaciones" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Estimaciones de Ingresos y Utilidades</h2>
+            <p>Total Kilogramos: <span id="modal-total-kilogramos"></span></p>
+            <p>Total Inversión: <span id="modal-total-inversion"></span></p>
+            
+            <label for="modal-precio-venta">Precio de Venta ($):</label>
+            <input type="number" id="modal-precio-venta" placeholder="Ingrese el precio de venta">
+            
+            <label for="modal-gastos-tonelada">Gastos por Tonelada ($):</label>
+            <input type="number" id="modal-gastos-tonelada" placeholder="Ingrese los gastos por tonelada">
+            
+            <!-- Nuevo elemento para mostrar el total de gastos por tonelada -->
+            <p id="modal-total-gastos-tonelada">Total Gastos por Tonelada: $0</p>
+            
+            <label for="modal-otros-gastos">Otros Gastos ($):</label>
+            <input type="number" id="modal-otros-gastos" placeholder="Ingrese otros gastos">
+            <button id="calcular-estimaciones-modal">Calcular</button>
+            <div id="resultados-estimaciones-modal">
+                <p id="modal-ingresos"></p>
+                <p id="modal-utilidades"></p>
+                <p id="modal-rentabilidad"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getQueryParams() {
+            const queryString = window.location.search;
+            return new URLSearchParams(queryString);
+        }
+
+        const queryParams = getQueryParams();
+        const producto = queryParams.get('producto');
+        const tituloProductoElement = document.getElementById('titulo-producto');
+        const registrosTbody = document.getElementById('registros-tbody');
+        const regresarInicioButton = document.getElementById('regresar-inicio');
+        const descargarRegistrosButton = document.getElementById('descargar-registros');
+        const formatearRegistrosButton = document.getElementById('formatear-registros');
+        const abrirModalButton = document.getElementById('abrir-modal');
+        const modal = document.getElementById('modalEstimaciones');
+        const closeModal = document.getElementsByClassName('close')[0];
+        const calcularEstimacionesModalButton = document.getElementById('calcular-estimaciones-modal');
+        const modalTotalKilogramos = document.getElementById('modal-total-kilogramos');
+        const modalTotalInversion = document.getElementById('modal-total-inversion');
+        const modalPrecioVentaInput = document.getElementById('modal-precio-venta');
+        const modalGastosToneladaInput = document.getElementById('modal-gastos-tonelada');
+        const modalOtrosGastosInput = document.getElementById('modal-otros-gastos');
+        const modalIngresosElement = document.getElementById('modal-ingresos');
+        const modalUtilidadesElement = document.getElementById('modal-utilidades');
+        const modalRentabilidadElement = document.getElementById('modal-rentabilidad');
+        
+        // Nuevo elemento para mostrar el total de gastos por tonelada
+        const modalTotalGastosTonelada = document.getElementById('modal-total-gastos-tonelada');
+
+        tituloProductoElement.textContent = `Registros de ${producto}`;
+
+        let registros = JSON.parse(localStorage.getItem(`registros_${producto}`)) || [];
+
+        function mostrarRegistros() {
+            registrosTbody.innerHTML = '';
+            let totalKilogramos = 0;
+            let totalInversion = 0;
+            let sumaPrecios = 0;
+            let cantidadRegistros = registros.length;
+
+            registros.forEach(registro => {
+                const row = document.createElement('tr');
+                const celdaCliente = document.createElement('td');
+                celdaCliente.textContent = registro.cliente;
+                const celdaTotalPeso = document.createElement('td');
+                celdaTotalPeso.textContent = registro.totalPeso.toLocaleString('de-DE');
+                const celdaPrecioPorKilo = document.createElement('td');
+                celdaPrecioPorKilo.textContent = registro.precioPorKilo.toLocaleString('de-DE');
+                const celdaTotalPagar = document.createElement('td');
+                celdaTotalPagar.textContent = registro.totalPagar.toLocaleString('de-DE');
+                // Columna de fecha omitida intencionalmente
+                row.appendChild(celdaCliente);
+                row.appendChild(celdaTotalPeso);
+                row.appendChild(celdaPrecioPorKilo);
+                row.appendChild(celdaTotalPagar);
+                registrosTbody.appendChild(row);
+
+                totalKilogramos += registro.totalPeso;
+                totalInversion += registro.totalPagar;
+                sumaPrecios += registro.precioPorKilo;
+            });
+
+            const promedioPrecios = sumaPrecios / cantidadRegistros;
+
+            const totalRow = document.createElement('tr');
+            totalRow.classList.add('fila-totales'); // Añadir clase específica
+
+            const celdaTotalLabel = document.createElement('td');
+            celdaTotalLabel.textContent = 'Total';
+            const celdaTotalKilogramos = document.createElement('td');
+            celdaTotalKilogramos.textContent = totalKilogramos.toLocaleString('de-DE');
+            const celdaPromedioPrecios = document.createElement('td');
+            celdaPromedioPrecios.textContent = promedioPrecios.toLocaleString('de-DE');
+            const celdaTotalInversion = document.createElement('td');
+            celdaTotalInversion.textContent = totalInversion.toLocaleString('de-DE');
+            totalRow.appendChild(celdaTotalLabel);
+            totalRow.appendChild(celdaTotalKilogramos);
+            totalRow.appendChild(celdaPromedioPrecios);
+            totalRow.appendChild(celdaTotalInversion);
+            registrosTbody.appendChild(totalRow);
+
+            // Almacenar los totales en los elementos del modal
+            modalTotalKilogramos.textContent = totalKilogramos.toLocaleString('de-DE');
+            modalTotalInversion.textContent = totalInversion.toLocaleString('de-DE');
+        }
+
+        mostrarRegistros();
+
+        function descargarExcel() {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(registros);
+    XLSX.utils.book_append_sheet(wb, ws, `Registros_${producto}`);
+    XLSX.writeFile(wb, `registros_${producto}.xlsx`);
+} 
+function descargarPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const fechaActual = new Date().toLocaleDateString('es-ES');
+    const titulo = `REGISTRO DEL PRODUCTO: ${producto.toUpperCase()}`;
+
+    // Establecer fuente y tamaño del título
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+
+    // Obtener el ancho del documento para centrar el texto
+    const pageWidth = doc.internal.pageSize.width;
+    const textWidth = doc.getTextWidth(titulo);
+    const x = (pageWidth - textWidth) / 2;
+
+    // Aplicar color dorado (RGB aproximado)
+    doc.setTextColor(218, 165, 32);
+    doc.text(titulo, x, 20);
+
+    // Restablecer color a negro para el resto del contenido
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${fechaActual}`, x + 15, 30); // Ajuste de alineación
+
+    const headers = [["Vendedor", "Kilogramos (kg)", "Precio X Kilo ($)", "Total inversion ($)"]];
+    const data = registros.map(registro => [
+        registro.cliente,
+        registro.totalPeso.toLocaleString('de-DE'),
+        registro.precioPorKilo.toLocaleString('de-DE'),
+        registro.totalPagar.toLocaleString('de-DE')
+    ]);
+
+    // Agregar la última fila con formato en negrita
+    const totalRow = [
+        "TOTAL",
+        registros.reduce((sum, r) => sum + r.totalPeso, 0).toLocaleString('de-DE'),
+        (registros.reduce((sum, r) => sum + r.precioPorKilo, 0) / registros.length).toLocaleString('de-DE'),
+        registros.reduce((sum, r) => sum + r.totalPagar, 0).toLocaleString('de-DE')
+    ];
+    
+    data.push(totalRow);
+
+    doc.autoTable({
+        startY: 40, 
+        head: headers,
+        body: data,
+        styles: { fillColor: [255, 255, 255] },
+        headStyles: { fillColor: [218, 165, 32], textColor: [255, 255, 255] },
+        theme: "grid",
+        didParseCell: function (data) {
+            if (data.row.index === registros.length) { // Última fila en negrita
+                data.cell.styles.fontStyle = "bold";
+            }
+        }
+    });
+
+    doc.save(`registros_${producto}.pdf`);
+}
+
+
+        function formatearRegistros() {
+            const modalConfirmacion = document.createElement('div');
+            modalConfirmacion.classList.add('modal-confirmacion');
+
+            const modalContent = document.createElement('div');
+            modalContent.classList.add('modal-content-confirmacion');
+            modalContent.innerHTML = `
+                <p>¿Estás seguro de que deseas formatear todos los registros? Esta acción no se puede deshacer.</p>
+                <div class="botones">
+                    <button id="confirmar-formato">Confirmar</button>
+                    <button id="cancelar-formato">Cancelar</button>
+                </div>
+            `;
+
+            modalConfirmacion.appendChild(modalContent);
+            document.body.appendChild(modalConfirmacion);
+
+            // Manejar acciones de confirmar y cancelar
+            const confirmarBoton = document.getElementById('confirmar-formato');
+            const cancelarBoton = document.getElementById('cancelar-formato');
+
+            cancelarBoton.addEventListener('click', () => {
+                document.body.removeChild(modalConfirmacion); // Cerrar la ventana modal
+            });
+
+            confirmarBoton.addEventListener('click', () => {
+                registros = [];
+                localStorage.setItem(`registros_${producto}`, JSON.stringify(registros));
+                mostrarRegistros();
+                document.body.removeChild(modalConfirmacion); // Cerrar la ventana modal
+            });
+
+            // Mostrar la ventana modal
+            modalConfirmacion.style.display = 'block';
+        }
+
+        function calcularEstimaciones() {
+            const precioVenta = parseFloat(modalPrecioVentaInput.value);
+            const gastosPorTonelada = parseFloat(modalGastosToneladaInput.value);
+            const otrosGastos = parseFloat(modalOtrosGastosInput.value);
+            const totalKilogramos = parseFloat(modalTotalKilogramos.textContent.replace(/\./g, ''));
+            const totalInversion = parseFloat(modalTotalInversion.textContent.replace(/\./g, ''));
+
+            if (!isNaN(precioVenta) && precioVenta > 0 && 
+                !isNaN(gastosPorTonelada) && gastosPorTonelada >= 0 && 
+                !isNaN(otrosGastos) && otrosGastos >= 0) {
+                
+                const totalToneladas = totalKilogramos / 1000;
+                const ingresosTotales = totalKilogramos * precioVenta;
+                const gastosTotalesPorTonelada = gastosPorTonelada * totalToneladas;
+                const gastosTotales = gastosTotalesPorTonelada + otrosGastos;
+                const utilidades = ingresosTotales - totalInversion - gastosTotales;
+                const rentabilidad = (utilidades / totalInversion) * 100;
+
+                // Actualizar el contenido de los elementos del modal
+                modalIngresosElement.textContent = `Ingresos Totales: $${ingresosTotales.toLocaleString('de-DE')}`;
+                modalUtilidadesElement.textContent = `Utilidades: $${utilidades.toLocaleString('de-DE')}`;
+                modalRentabilidadElement.textContent = `Rentabilidad: ${rentabilidad.toFixed(2)}%`;
+                
+                // Actualizar el total de gastos por tonelada
+                modalTotalGastosTonelada.textContent = `Total Gastos por Tonelada: $${gastosTotalesPorTonelada.toLocaleString('de-DE')}`;
+            } else {
+                alert('Por favor, ingrese valores válidos.');
+            }
+        }
+
+        document.getElementById("descargar-excel").addEventListener("click", descargarExcel);
+document.getElementById("descargar-pdf").addEventListener("click", descargarPDF);
+
+        formatearRegistrosButton.addEventListener('click', formatearRegistros);
+        abrirModalButton.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        calcularEstimacionesModalButton.addEventListener('click', calcularEstimaciones);
+
+        regresarInicioButton.addEventListener('click', () => {
+            window.location.href = "index.html";
+        });
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #e3f2fd, #90caf9);
+    color: #333;
+}
+
+header {
+    background: #1e88e5;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    animation: fadeIn 2s ease-in;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.summary p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+    animation: slideIn 1.5s ease-out;
+}
+
+/* Main Styles */
+main {
+    padding: 20px;
+}
+
+h2 {
+    color: #1565c0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: scaleUp 0.5s ease-in-out;
+}
+
+form input, form textarea, form button {
+    width: calc(100% - 100px);
+    margin: 10px auto;
+    padding: 10px;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    display: block;
+    font-size: 1rem;
+}
+
+form button {
+    background: #42a5f5;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+form button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Profiles Section */
+#profiles {
+    margin-top: 40px;
+}
+
+ul#profileList {
+    list-style: none;
+    padding: 0;
+}
+
+ul#profileList li {
+    background: #fff;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+ul#profileList li:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Filters Section */
+#filters input {
+    width: calc(100% - 40px);
+    margin: 20px auto;
+    padding: 10px;
+    border: 2px solid #90caf9;
+    border-radius: 5px;
+    display: block;
+    font-size: 1.1rem;
+    animation: fadeIn 1.5s ease-out;
+}
+
+/* Export Button */
+#exportButton {
+    background: #1e88e5;
+    color: white;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin: 20px auto;
+    display: block;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+#exportButton:hover {
+    background: #1565c0;
+    transform: scale(1.1);
+}
+/* Estilos del modal */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; /* Ocupa el 70% del ancho de la página */
+    max-height: 90%; /* Ajusta el alto máximo del modal */
+    overflow-y: auto; /* Barra de desplazamiento vertical si es necesario */
+    background-color: #fff; /* Fondo blanco */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para destacar el modal */
+    padding: 20px; /* Espaciado interno */
+    z-index: 1000; /* Asegura que esté sobre otros elementos */
+}
+
+/* Fondo oscuro detrás del modal */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    z-index: 999; /* Debajo del modal pero sobre el resto del contenido */
+}
+
+
+.modal h2 {
+    margin-top: 0;
+    color: #1565c0;
+}
+
+.modal-content, .modal-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+    background: #007BFF;
+    color: white;
+}
+
+.modal input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Confirmation Modal */
+.confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.confirmation-modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-modal button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.confirmation-modal .confirm {
+    background-color: #28a745;
+    color: white;
+}
+
+.confirmation-modal .cancel {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Table Styles */
+.table-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+.debt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.debt-table th, .debt-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.debt-table th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.debt-table ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Export Button */
+#exportPDF {
+    background: #1e88e5;
+    color: white;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin: 20px auto;
+    display: block;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+#exportPDF:hover {
+    background: #1565c0;
+    transform: scale(1.1);
+}
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+/* Estilos de iconos */
+header h1::before {
+    content: "\f559"; /* Ícono de dinero */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+.summary p::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+.summary p:nth-child(1)::before {
+    content: "\f155"; /* Ícono de billete */
+}
+
+.summary p:nth-child(2)::before {
+    content: "\f007"; /* Ícono de usuario */
+}
+
+#addDebtSection h2::before {
+    content: "\f234"; /* Ícono de agregar usuario */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+#filters h2::before {
+    content: "\f002"; /* Ícono de búsqueda */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+#profiles h2::before {
+    content: "\f0c0"; /* Ícono de lista de usuarios */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+button#exportButton::before {
+    content: "\f1c3"; /* Ícono de archivo Excel */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+button#exportPDF::before {
+    content: "\f1c1"; /* Ícono de archivo PDF */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+/* Estilos para botones dentro del perfil */
+.modal button::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 6px;
+}
+
+.modal button:nth-child(1)::before {
+    content: "\f0c5"; /* Ícono de agregar archivo */
+}
+
+.modal button:nth-child(2)::before {
+    content: "\f56e"; /* Ícono de descarga */
+}
+
+.modal button:nth-child(3)::before {
+    content: "\f56f"; /* Ícono de PDF */
+}
+
+.modal button:nth-child(4)::before {
+    content: "\f00d"; /* Ícono de cerrar */
+}
+/* Sección de lista de deudores */
+#profileList {
+    max-height: 300px; /* Altura máxima con scroll */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: #fff;
+    list-style: none;
+}
+
+/* Estilos para los iconos en los campos de entrada */
+#debtForm {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  #debtForm input, #debtForm textarea {
+    padding-left: 35px; /* Espacio para el icono */
+  }
+  
+  .debt-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .debt-input-container i {
+    position: absolute;
+    left: 10px;
+    color: #555;
+  }
+  
+  /* Estilos para los botones con iconos */
+  button[type="submit"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  button[type="submit"] i {
+    color: white;
+  }
+  
+  /* Aplicación de iconos específicos */
+  .debt-input-container input#idNumber + i {
+    content: "\f2c2"; /* Icono de usuario ID */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+  }
+  
+  .debt-input-container input#name + i {
+    content: "\f007"; /* Icono de usuario */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+  }
+  
+  .debt-input-container input#phone + i {
+    content: "\f095"; /* Icono de teléfono */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+  }
+  
+  .debt-input-container input#amount + i {
+    content: "\f155"; /* Icono de dinero */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+  }
+  
+  .debt-input-container textarea#description + i {
+    content: "\f27a"; /* Icono de texto */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+  }
+  
+  button[type="submit"]::before {
+    content: "\f067"; /* Icono de más (agregar) */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+  }
+  .input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.input-container i {
+    position: absolute;
+    left: 10px;
+    color: #888;
+    font-size: 18px;
+}
+
+.input-container input,
+.input-container textarea {
+    width: 100%;
+    padding: 10px 10px 10px 35px; /* Ajusta el padding izquierdo para que no se superponga el ícono */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.input-container textarea {
+    resize: none;
+    height: 60px;
+}
+
+.input-container input:focus,
+.input-container textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Botón Cerrar */
+button.close-button {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+/* Botón Descargar Deudas */
+button.download-debts {
+    background-color: #6e8baa;
+    color: white;
+}
+
+/* Botón Exportar a PDF */
+button.export-pdf {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Estilo adicional para mejorar el diseño */
+button i {
+    margin-right: 8px;
+}
+
+/* Ajuste para botones dentro de modales */
+.modal button {
+    width: 100%;
+    margin-top: 10px;
+}
