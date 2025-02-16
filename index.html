@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIBRANZA - Registro de Pesadas</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" href="RUO_7313-ca01-427d-81ea-03e13888fb7b_1737419715163.png">
+</head>
+<body>
+  <header>
+    <h1> <img src="RUO_7313-ca01-427d-81ea-03e13888fb7b_1737419715163.png">LIBRANZA</h1>
+    <button id="ver-registro" style="position: absolute; top: 60px; left: 10px;">Ver Registro</button>
+  </header>
+
+  <main>
+    <section class="producto-seleccion">
+      <div class="producto-seleccion-wrapper">
+        <label for="producto-select">Producto:</label>
+        <select id="producto-select">
+          <!-- Opciones de productos cargadas dinámicamente -->
+        </select>
+        <i id="eliminar-producto" class="fas fa-trash-alt trash-icon"></i>
+        <i id="agregar-producto-icon" class="fas fa-plus-circle add-icon"></i>
+      </div>
+      <input type="text" id="nuevo-producto-input" placeholder="Ingrese el nuevo producto" style="display: none;">
+      <button id="agregar-producto" style="display: none;">Agregar Producto</button>
+    </section>
+
+    <section class="entrada-peso">
+      <h2>Ingresar Peso (Pesada)</h2>
+      <label for="peso-input">Peso (kg):</label>
+      <input type="number" id="peso-input" min="0" placeholder="Ingrese el peso en kilogramos">
+      <button id="siguiente-pesada" disabled>Siguiente Pesada</button>
+      <button id="regresar-pesada" disabled>Regresar peso</button>
+    </section>
+<!-- Modal de confirmación para eliminar peso -->
+<div id="modal-eliminar-peso" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>¿Está seguro de que desea eliminar el peso <span id="peso-a-eliminar">0</span> kg?</p>
+    <button id="confirmar-eliminar-peso">Aceptar</button>
+    <button id="cancelar-eliminar-peso">Cancelar</button>
+  </div>
+</div>
+
+    <section class="historial-pesadas">
+      <h2>Historial de Pesadas</h2>
+      <table>
+        <p id="ultimo-peso">
+          <h3>Último Peso Registrado: <span id="ultimo-peso-valor">0</span> kg</h3>
+        </p>
+        <thead>
+          <tr>
+            <th>Pesada</th>
+            <th>Peso Acumulado (kg)</th>
+          </tr>
+        </thead>
+        <tbody id="pesadas-tbody">
+          <tr>
+            <td id="pesada-actual">1</td>
+            <td id="peso-acumulado">0</td>
+          </tr>
+        </tbody>
+      </table>
+      <p id="total-peso"></p>
+    </section>
+
+    <section class="acciones">
+      <button id="finalizar-proceso" disabled>Calcular</button>
+      <button id="reiniciar-proceso">Reiniciar</button>
+      <!-- Modal de confirmación para reiniciar proceso -->
+<div id="modal-reiniciar" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>¿Está seguro de que desea reiniciar el proceso?</p>
+    <button id="confirmar-reiniciar">Aceptar</button>
+    <button id="cancelar-reiniciar">Cancelar</button>
+  </div>
+</div>
+
+      <button id="ver-deudas" class="btn">Ver Deudas</button> <!-- Botón para abrir deudas.html en nueva pestaña -->
+    </section>
+
+    <section class="precio-kilo">
+      <h2>Precio por Kilo</h2>
+      <label for="precio-kilo-input">Precio ($):</label>
+      <input type="text" id="precio-kilo-input" placeholder="Ingrese el precio">
+    </section>
+  </main>
+
+  <footer>
+    <p class="abajo">&copy; 2025 LIBRANZA</p>
+  </footer>
+
+  <!-- Modal de eliminar producto -->
+  <div id="modal-eliminar" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>¿Está seguro de que desea eliminar el producto seleccionado?</p>
+      <button id="confirmar-eliminar">Aceptar</button>
+      <button id="cancelar-eliminar">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal de agregar producto -->
+  <div id="modal-agregar" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Agregar Nuevo Producto</h2>
+      <label for="nuevo-producto-nombre">Nombre del Producto:</label>
+      <input type="text" id="nuevo-producto-nombre">
+      <button id="confirmar-agregar">Agregar</button>
+      <button id="cancelar-agregar">Cancelar</button>
+    </div>
+  </div>
+  <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+  <script>
+    // Variables globales
+    let numeroPesada = 1;
+    const pesoInput = document.getElementById('peso-input');
+    const siguientesPesadaButton = document.getElementById('siguiente-pesada');
+    const regresarPesadaButton = document.getElementById('regresar-pesada');
+    const finalizarProcesoButton = document.getElementById('finalizar-proceso');
+    const reiniciarProcesoButton = document.getElementById('reiniciar-proceso');
+    const verRegistroButton = document.getElementById('ver-registro');
+    const verDeudasButton = document.getElementById('ver-deudas');
+    const pesadaActualElement = document.getElementById('pesada-actual');
+    const pesoAcumuladoElement = document.getElementById('peso-acumulado');
+    const totalPesoElement = document.getElementById('total-peso');
+    const precioKiloInput = document.getElementById('precio-kilo-input');
+    const productoSelect = document.getElementById('producto-select');
+    const nuevoProductoInput = document.getElementById('nuevo-producto-input');
+    const agregarProductoButton = document.getElementById('agregar-producto');
+    const eliminarProductoIcon = document.getElementById('eliminar-producto');
+    const agregarProductoIcon = document.getElementById('agregar-producto-icon');
+    const modalEliminar = document.getElementById('modal-eliminar');
+    const modalAgregar = document.getElementById('modal-agregar');
+    const confirmarEliminarButton = document.getElementById('confirmar-eliminar');
+    const cancelarEliminarButton = document.getElementById('cancelar-eliminar');
+    const confirmarAgregarButton = document.getElementById('confirmar-agregar');
+    const cancelarAgregarButton = document.getElementById('cancelar-agregar');
+    const closeModalEliminarButton = document.querySelector('#modal-eliminar .close');
+    const closeModalAgregarButton = document.querySelector('#modal-agregar .close');
+    const ultimoPesoValorElement = document.getElementById('ultimo-peso-valor');
+
+
+    let totalPeso = 0;
+    let pesos = [];
+  
+    // Cargar productos del localStorage
+    function cargarProductos() {
+      const productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
+      // Agregar opciones existentes
+      productosGuardados.forEach(producto => {
+        agregarOpcionProducto(producto);
+      });
+    }
+  
+    // Función para agregar opción al select
+    function agregarOpcionProducto(producto) {
+      const nuevaOpcion = document.createElement('option');
+      nuevaOpcion.value = producto.toLowerCase();
+      nuevaOpcion.textContent = producto;
+      productoSelect.appendChild(nuevaOpcion);
+    }
+  
+    // Guardar un nuevo producto en el localStorage
+    function guardarProducto(producto) {
+      const productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
+      if (!productosGuardados.includes(producto)) {
+        productosGuardados.push(producto);
+        localStorage.setItem('productos', JSON.stringify(productosGuardados));
+      }
+    }
+  
+    function actualizarPesoAcumulado() {
+      totalPeso = pesos.reduce((acc, peso) => acc + peso, 0);
+      pesadaActualElement.textContent = numeroPesada;
+      pesoAcumuladoElement.textContent = Math.floor(totalPeso); // Eliminado los decimales
+      totalPesoElement.textContent = `Total kilogramos: ${Math.floor(totalPeso)} kg`; // Eliminado los decimales
+    }
+  
+    function reiniciarProceso() {
+      location.reload();
+    }
+  
+    function verificarPrecio() {
+      const precioPorKilo = parseFloat(precioKiloInput.value.replace(/\./g, '').replace(',', '.'));
+      finalizarProcesoButton.disabled = isNaN(precioPorKilo) || precioPorKilo <= 0;
+    }
+  
+    function formatNumber(input) {
+      let value = input.value.replace(/\D/g, '');
+      if (value.length) {
+        value = new Intl.NumberFormat('es-ES').format(value);
+        input.value = value;
+      }
+    }
+  
+    function eliminarProductoSeleccionado() {
+      const productoSeleccionado = productoSelect.value;
+      if (productoSeleccionado && productoSeleccionado !== 'otro') {
+        let productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
+        productosGuardados = productosGuardados.filter(producto => producto.toLowerCase() !== productoSeleccionado);
+        localStorage.setItem('productos', JSON.stringify(productosGuardados));
+        // Remover opción del select
+        const opcionAEliminar = Array.from(productoSelect.options).find(option => option.value === productoSeleccionado);
+        if (opcionAEliminar) {
+          productoSelect.removeChild(opcionAEliminar);
+        }
+      }
+      modalEliminar.style.display = 'none';
+    }
+  
+    eliminarProductoIcon.addEventListener('click', () => {
+      if (productoSelect.value && productoSelect.value !== 'otro') {
+        modalEliminar.style.display = 'block';
+      } else {
+        alert('No hay ningún producto seleccionado o está seleccionada la opción "Otro".');
+      }
+    });
+  
+    confirmarEliminarButton.addEventListener('click', eliminarProductoSeleccionado);
+    cancelarEliminarButton.addEventListener('click', () => modalEliminar.style.display = 'none');
+    closeModalEliminarButton.addEventListener('click', () => modalEliminar.style.display = 'none');
+    window.addEventListener('click', (event) => {
+      if (event.target === modalEliminar) {
+        modalEliminar.style.display = 'none';
+      }
+    });
+  
+    agregarProductoIcon.addEventListener('click', () => {
+      modalAgregar.style.display = 'block';
+    });
+  
+    confirmarAgregarButton.addEventListener('click', () => {
+      const nuevoProducto = document.getElementById('nuevo-producto-nombre').value.trim();
+      if (nuevoProducto) {
+        agregarOpcionProducto(nuevoProducto);
+        guardarProducto(nuevoProducto);
+        document.getElementById('nuevo-producto-nombre').value = '';
+        modalAgregar.style.display = 'none';
+      }
+    });
+  
+    cancelarAgregarButton.addEventListener('click', () => modalAgregar.style.display = 'none');
+    closeModalAgregarButton.addEventListener('click', () => modalAgregar.style.display = 'none');
+    window.addEventListener('click', (event) => {
+      if (event.target === modalAgregar) {
+        modalAgregar.style.display = 'none';
+      }
+    });
+  
+    pesoInput.addEventListener('input', () => {
+      const peso = parseFloat(pesoInput.value.replace(',', '.'));
+      if (!isNaN(peso) && peso > 0) {
+        siguientesPesadaButton.disabled = false;
+        regresarPesadaButton.disabled = numeroPesada === 1;
+      } else {
+        siguientesPesadaButton.disabled = true;
+        regresarPesadaButton.disabled = true;
+      }
+    });
+  
+    siguientesPesadaButton.addEventListener('click', () => {
+      const peso = parseFloat(pesoInput.value.replace(',', '.'));
+      if (!isNaN(peso) && peso > 0) {
+        pesos.push(peso);
+        actualizarPesoAcumulado();
+        actualizarUltimoPeso(); // Actualizar el último peso
+        numeroPesada++;
+        pesoInput.value = '';
+        pesoInput.focus();
+        siguientesPesadaButton.disabled = true;
+        regresarPesadaButton.disabled = numeroPesada === 1;
+
+    // Evitar que el botón quede seleccionado
+    siguientesPesadaButton.blur();
+  
+        // Comando de voz para anunciar el peso ingresado
+        const speech = new SpeechSynthesisUtterance(`Peso ingresado: ${Math.floor(peso)} kilogramos`); // Eliminado los decimales
+        speech.lang = 'es-ES';
+        window.speechSynthesis.speak(speech);
+      }
+    });
+  
+// Actualizar el último peso al cargar la página
+window.addEventListener('load', () => {
+  actualizarUltimoPeso();
+});
+    precioKiloInput.addEventListener('input', () => {
+      formatNumber(precioKiloInput);
+      verificarPrecio();
+    });
+  
+    finalizarProcesoButton.addEventListener('click', () => {
+      const precioPorKilo = parseFloat(precioKiloInput.value.replace(/\./g, '').replace(',', '.'));
+      if (!isNaN(precioPorKilo) && precioPorKilo > 0) {
+        const totalPagar = totalPeso * precioPorKilo;
+        const producto = productoSelect.value;
+        const queryParams = new URLSearchParams({
+          producto,
+          pesos: JSON.stringify(pesos),
+          totalPeso: Math.floor(totalPeso), // Eliminado los decimales
+          precioPorKilo: Math.floor(precioPorKilo), // Eliminado los decimales
+          totalPagar: Math.floor(totalPagar) // Eliminado los decimales
+        });
+        window.location.href = `resultado6.html?${queryParams.toString()}`;
+      }
+    });
+    const modalReiniciar = document.getElementById('modal-reiniciar');
+const confirmarReiniciarButton = document.getElementById('confirmar-reiniciar');
+const cancelarReiniciarButton = document.getElementById('cancelar-reiniciar');
+const closeModalReiniciarButton = document.querySelector('#modal-reiniciar .close');
+
+// Mostrar el modal al hacer clic en "Reiniciar"
+reiniciarProcesoButton.addEventListener('click', () => {
+  modalReiniciar.style.display = 'block';
+});
+
+// Reiniciar el proceso si se confirma
+confirmarReiniciarButton.addEventListener('click', () => {
+  modalReiniciar.style.display = 'none';
+  reiniciarProceso();
+});
+
+// Cerrar el modal sin reiniciar
+cancelarReiniciarButton.addEventListener('click', () => {
+  modalReiniciar.style.display = 'none';
+});
+
+// Cerrar el modal si se hace clic en la "X"
+closeModalReiniciarButton.addEventListener('click', () => {
+  modalReiniciar.style.display = 'none';
+});
+
+// Cerrar el modal si se hace clic fuera de él
+window.addEventListener('click', (event) => {
+  if (event.target === modalReiniciar) {
+    modalReiniciar.style.display = 'none';
+  }
+});
+
+  
+    verRegistroButton.addEventListener('click', () => {
+      const producto = productoSelect.value;
+      window.location.href = `mostrar_registros.html?producto=${producto}`;
+    });
+  
+    verDeudasButton.addEventListener('click', () => {
+      window.open('deudas2.html', '_blank'); // Abre deudas.html en una nueva pestaña
+    });
+  
+    productoSelect.addEventListener('change', () => {
+      if (productoSelect.value === 'otro') {
+        nuevoProductoInput.style.display = 'block';
+        agregarProductoButton.style.display = 'block';
+      } else {
+        nuevoProductoInput.style.display = 'none';
+        agregarProductoButton.style.display = 'none';
+      }
+    });
+  
+    agregarProductoButton.addEventListener('click', () => {
+      const nuevoProducto = nuevoProductoInput.value.trim();
+      if (nuevoProducto) {
+        agregarOpcionProducto(nuevoProducto);
+        guardarProducto(nuevoProducto);
+        nuevoProductoInput.value = '';
+        nuevoProductoInput.style.display = 'none';
+        agregarProductoButton.style.display = 'none';
+        productoSelect.value = nuevoProducto.toLowerCase();
+      }
+    });
+    const ultimoPesoValor = document.getElementById('ultimo-peso-valor');
+
+// Función para actualizar el último peso mostrado
+function actualizarUltimoPeso() {
+  if (pesos.length > 0) {
+    const ultimoPeso = pesos[pesos.length - 1];
+    ultimoPesoValorElement.textContent = Math.floor(ultimoPeso); // Sin decimales
+  } else {
+    ultimoPesoValorElement.textContent = 0;
+  }
+}
+pesoInput.addEventListener('keypress', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // Evita que el formulario se envíe si está dentro de uno
+    siguientesPesadaButton.click(); // Simula el clic en el botón
+  }
+});
+// Elementos del modal
+const modalEliminarPeso = document.getElementById('modal-eliminar-peso');
+const confirmarEliminarPesoButton = document.getElementById('confirmar-eliminar-peso');
+const cancelarEliminarPesoButton = document.getElementById('cancelar-eliminar-peso');
+const closeModalEliminarPesoButton = document.querySelector('#modal-eliminar-peso .close');
+const pesoAEliminarElement = document.getElementById('peso-a-eliminar');
+
+regresarPesadaButton.addEventListener('click', () => {
+    if (numeroPesada > 1) {
+        // Mostrar el modal con el último peso registrado
+        pesoAEliminarElement.textContent = pesos[pesos.length - 1] || 0;
+        modalEliminarPeso.style.display = 'block';
+    }
+});
+
+// Confirmar eliminación del peso
+confirmarEliminarPesoButton.addEventListener('click', () => {
+    if (numeroPesada > 1) {
+        numeroPesada--;
+        pesos.pop();
+        actualizarPesoAcumulado();
+        actualizarUltimoPeso();
+        pesoInput.focus();
+        regresarPesadaButton.disabled = numeroPesada === 1;
+    }
+    
+    modalEliminarPeso.style.display = 'none';
+});
+
+
+// Cerrar modal sin eliminar
+cancelarEliminarPesoButton.addEventListener('click', () => modalEliminarPeso.style.display = 'none');
+closeModalEliminarPesoButton.addEventListener('click', () => modalEliminarPeso.style.display = 'none');
+window.addEventListener('click', (event) => {
+    if (event.target === modalEliminarPeso) {
+        modalEliminarPeso.style.display = 'none';
+    }
+});
+document.getElementById("confirmar-eliminar-peso").addEventListener("click", function () {
+    const pesoEliminado = parseFloat(document.getElementById("peso-a-eliminar").textContent);
+    
+    if (!isNaN(pesoEliminado)) {
+        // Comando de voz para anunciar el peso eliminado
+        const speech = new SpeechSynthesisUtterance(`Peso eliminado: ${pesoEliminado} kilogramos`);
+        speech.lang = 'es-ES';
+        window.speechSynthesis.speak(speech);
+    }
+
+   
+});
+
+function iniciarReconocimientoVoz() {
+      const reconocimiento = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      reconocimiento.lang = 'es-ES';
+      reconocimiento.continuous = true;  // Mantiene la escucha activa
+      reconocimiento.interimResults = false;  // Solo resultados finales
+      
+      reconocimiento.onresult = function(event) {
+          const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+          console.log("Comando de voz detectado:", transcript);
+
+          if (transcript.includes("siguiente")) {
+              document.getElementById('siguiente-pesada').click();
+          } else if (transcript.includes("regresar")) {
+              document.getElementById('regresar-pesada').click();
+          } else if (transcript.includes("reiniciar")) {
+              document.getElementById('reiniciar-proceso').click();
+          } else if (transcript.includes("calcular")) {
+              document.getElementById('finalizar-proceso').click();
+          }
+      };
+
+      reconocimiento.onerror = function(event) {
+          console.error("Error en reconocimiento de voz:", event.error);
+      };
+
+      reconocimiento.start();
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+      iniciarReconocimientoVoz();
+  });
+  // Verifica si el navegador soporta SpeechRecognition
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = "es-ES";
+    recognition.continuous = true; // Mantiene la escucha activa
+    recognition.interimResults = false;
+
+    recognition.onresult = function (event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        console.log("Comando de voz detectado:", transcript);
+
+        if (transcript.includes("agregar peso")) {
+            document.getElementById("siguiente-pesada").click();
+        } else if (transcript.includes("reiniciar proceso")) {
+            document.getElementById("reiniciar-proceso").click();
+        } else if (transcript.includes("ver deudas")) {
+            document.getElementById("ver-deudas").click();
+        } else {
+            console.log("Comando no reconocido.");
+        }
+    };
+
+    recognition.onerror = function (event) {
+        console.error("Error en el reconocimiento de voz:", event.error);
+    };
+
+    recognition.start(); // Inicia el reconocimiento de voz
+} else {
+    console.warn("El reconocimiento de voz no es compatible con este navegador.");
+}
+
+    // Cargar productos al iniciar la página
+    cargarProductos();
+
+  </script>
+    
+  </body>
+  </html>

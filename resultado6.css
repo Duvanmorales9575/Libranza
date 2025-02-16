@@ -1,0 +1,375 @@
+/* Estilos generales */
+body {
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  background-color: black;
+  color: white;
+  margin: 0;
+  padding: 0;
+  background-size: cover;
+}
+
+/* Animación de Fade In para el contenido del main */
+main {
+  padding: 20px;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+header {
+  background:transparent;
+  color: gold;
+  text-align: center;
+  padding: 10px;
+  animation: slideDown 1s ease-in-out;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+header h1 {
+  margin: 0;
+  font-family: cursive;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background: linear-gradient(gold, black);
+  color: white;
+}
+
+/* Animación de Slide Up para las filas de la tabla */
+tbody tr {
+  animation: slideUp 1s ease-in-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Estilos específicos para los botones */
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.acciones button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background:linear-gradient(gold, black);
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.acciones button:hover {
+  background:linear-gradient(black,white);
+  transform: scale(1.05);
+}
+
+.acciones #regresar-inicio {
+  margin-right: auto;
+}
+
+.acciones #registrar {
+  margin-left: auto;
+}
+
+/* Animación de Bounce para los totales */
+.total-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  animation: bounceIn 1s ease-in-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.5); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.total-container p {
+  font-weight: bold;
+}
+
+/* Animación de Fade In para el footer */
+footer {
+  background-color: transparent;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Estilos para el modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.5s ease-in-out;
+  
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+  animation: slideUp 0.5s ease-in-out;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#close-modal {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border: 1px solid white;
+}
+
+#close-modal:hover {
+  background: linear-gradient(gold, black);
+  transform: scale(1.05);
+}
+
+/* Estilos generales */
+body {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  background-color: black;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header y otras secciones */
+header {
+  background-color: transparent;
+  color:white;
+  text-align: center;
+  padding: 10px;
+}
+
+main {
+  padding: 20px;
+}
+
+/* Estilos específicos para dispositivos móviles */
+@media screen and (max-width: 768px) {
+  /* Ajustes para pantallas pequeñas */
+  header h1 {
+    font-size: 2.2em; /* Ejemplo de ajuste de tamaño de fuente */
+  }
+
+  .acciones {
+    flex-direction: column; /* Cambia a dirección de columna en dispositivos móviles */
+    align-items: stretch; /* Ajusta la alineación de los elementos */
+  }
+
+  .acciones button {
+    width: 100%; /* Botones ocupan todo el ancho disponible */
+    margin: 5px 0; /* Espacio entre botones */
+  }
+
+  table {
+    font-size: 0.9em; /* Reducción del tamaño de fuente para tablas en dispositivos móviles */
+  }
+}
+/* Estilos para el modal de confirmación */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
+
+.modal-content {
+  background: linear-gradient(gold, black);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin: auto;
+  margin-top: 100px;
+}
+
+.modal p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.modal-buttons button {
+  background-color: gold; /* Azul cielo */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-buttons button:hover {
+  background-color: gold; /* Azul más oscuro */
+}
+img {width: 30px;
+height: 27px;}
+
+h1{color: gold;
+font-size: 40px;}
+h2{margin: 0;}
+
+input{padding: 5px;
+border: 2px solid gold;
+border-radius: 10px;
+margin:0px 0px;}
+label{margin:5px;}
+.abajo{font-family: cursive;
+ color: white;}
+
+.r{color: gold;
+font-family: cursive;
+font-size: 35px;}
+#precio-kilo{color: gold;
+text-align: center;
+margin:0;}
+
+.habilitar{margin: auto;
+margin-top: 30px;}
+
+#precio-kilo-input{width: 100px;}
+.nor{color: white
+  ;font-size: 15px;}
+  /* Importar FontAwesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+/* Estilos generales para los iconos */
+.icon {
+    font-size: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
+    color: #d4af37; /* Color dorado para los iconos */
+}
+
+/* Iconos específicos para los botones y etiquetas */
+#regresar-inicio::before {
+    content: "\f104"; /* Icono de flecha hacia la izquierda */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+#registrar::before {
+    content: "\f058"; /* Icono de check */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+#generar-recibo::before {
+    content: "\f56d"; /* Icono de recibo */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+/* Icono en el título de la página */
+h1 img {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+/* Iconos en los inputs */
+.habilitar label::before {
+    content: "\f02e"; /* Icono de etiqueta de precio */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+label[for='cliente']::before {
+    content: "\f007"; /* Icono de usuario */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+label[for='valor-adeudado']::before {
+    content: "\f155"; /* Icono de dinero */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}

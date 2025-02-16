@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Deudas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="icon" href="RUO_7313-ca01-427d-81ea-03e13888fb7b_1737419715163.png">
+    <link rel="stylesheet" href="deudas2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Deudas</h1>
+        <div class="summary">
+            <p>Total a Cobrar: <span id="totalCobrar">0</span></p>
+            <p>Cantidad de Deudores: <span id="totalDeudores">0</span></p>
+        </div>
+    </header>
+    <main><form id="debtForm">
+        <div class="input-container">
+            <i class="fas fa-id-card"></i>
+            <input type="text" id="idNumber" placeholder="Número de Cédula" required>
+        </div>
+        
+        <div class="input-container">
+            <i class="fas fa-user"></i>
+            <input type="text" id="name" placeholder="Nombre" required>
+        </div>
+    
+        <div class="input-container">
+            <i class="fas fa-phone"></i>
+            <input type="tel" id="phone" placeholder="Número de Teléfono" required>
+        </div>
+    
+        <div class="input-container">
+            <i class="fas fa-dollar-sign"></i>
+            <input type="text" id="amount" placeholder="Monto de la Deuda" required>
+        </div>
+    
+        <div class="input-container">
+            <i class="fas fa-sticky-note"></i>
+            <textarea id="description" placeholder="Descripción"></textarea>
+        </div>
+    
+        <button type="submit">Agregar Deuda</button>
+    </form>
+    
+
+        <section id="filters">
+            <h2>Buscar Deudor</h2>
+            <input type="text" id="search" placeholder="Buscar por Cédula o Nombre">
+        </section>
+
+        <section id="profiles">
+            <h2>Lista de Deudores</h2>
+            <ul id="profileList"></ul>
+        </section>
+
+        <button id="exportButton">Exportar a Excel</button>
+        <button id="exportPDF">Exportar a PDF</button>
+    </main>
+
+    <script>
+        const profiles = {}; // Almacenar perfiles por número de cédula
+
+        const debtForm = document.getElementById('debtForm');
+        const totalCobrarElem = document.getElementById('totalCobrar');
+        const totalDeudoresElem = document.getElementById('totalDeudores');
+        const profileList = document.getElementById('profileList');
+        const searchInput = document.getElementById('search');
+        const exportButton = document.getElementById('exportButton');
+
+        // Guardar perfiles en localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('profiles', JSON.stringify(profiles));
+        }
+
+        // Cargar perfiles desde localStorage
+        function loadFromLocalStorage() {
+            const storedProfiles = localStorage.getItem('profiles');
+            if (storedProfiles) {
+                Object.assign(profiles, JSON.parse(storedProfiles));
+            }
+        }
+
+        // Formatear número con separación de millares
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        // Actualizar resumen
+        function updateSummary() {
+            const totalCobrar = Object.values(profiles).reduce((sum, profile) => {
+                return sum + profile.debts.reduce((debtSum, debt) => debtSum + debt.amount, 0);
+            }, 0);
+
+            const totalDeudores = Object.keys(profiles).length;
+
+            totalCobrarElem.textContent = formatNumber(totalCobrar);
+            totalDeudoresElem.textContent = totalDeudores;
+        }
+
+        // Renderizar perfiles
+        function renderProfiles() {
+            profileList.innerHTML = '';
+
+            Object.values(profiles).forEach(profile => {
+                const totalDebt = profile.debts.reduce((sum, debt) => sum + debt.amount, 0);
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>${profile.name}</strong> - ${profile.idNumber}
+                    <span> -----------------------------------------------------------------------------------------------------------------------------------------Deuda Total: ${formatNumber(totalDebt)}</span>
+                `;
+                li.addEventListener('click', () => viewProfile(profile.idNumber));
+                profileList.appendChild(li);
+            });
+        }
+
+        // Ver perfil
+        function viewProfile(idNumber) {
+            const profile = profiles[idNumber];
+
+            // Crear fondo oscuro
+            const backdrop = document.createElement('div');
+            backdrop.classList.add('modal-backdrop');
+            backdrop.addEventListener('click', closeModal);
+
+            // Crear el contenido del modal
+            const modalContent = document.createElement('div');
+            modalContent.classList.add('modal');
+            modalContent.innerHTML = `
+                <h2>${profile.name} (${profile.idNumber})</h2>
+                <div class="table-container">
+                    <table class="debt-table">
+                        <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Pagos</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${profile.debts.map((debt, index) => `
+                                <tr>
+                                    <td>${debt.description || 'Sin descripción'}</td>
+                                    <td>${formatNumber(debt.amount)}</td>
+                                    <td>
+                                        <ul>
+                                            ${debt.payments.map(payment => `<li>${payment.date}: ${formatNumber(payment.amount)}</li>`).join('')}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <button onclick="deleteDebt('${idNumber}', ${index})">Eliminar</button>
+                                        <button onclick="makePayment('${idNumber}', ${index})">Abonar</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <form id="addDebtToProfileForm">
+                    <h3>Agregar Nueva Deuda</h3>
+                    <input type="text" id="newAmount" placeholder="Monto de la Deuda" required>
+                    <textarea id="newDescription" placeholder="Descripción"></textarea>
+                    <button type="button" onclick="addDebtToProfile('${idNumber}')">Agregar Deuda</button>
+                </form>
+                <!-- Botón para descargar el Excel del perfil -->
+                <button class= "download-debts" onclick="exportProfileToExcel('${idNumber}')">Descargar Deudas</button>
+                <button class= "export-pdf" onclick="exportProfileToPDF('${idNumber}')">Exportar a PDF</button>
+                <button class= "close-button" onclick="closeModal()">Cerrar</button>
+            `;
+
+            // Añadir ambos elementos al cuerpo
+            document.body.appendChild(backdrop);
+            document.body.appendChild(modalContent);
+        }
+        function exportProfileToExcel(idNumber) {
+            const profile = profiles[idNumber];
+
+            const workbook = XLSX.utils.book_new();
+            const data = profile.debts.map(debt => ({
+                "Descripción": debt.description || 'Sin descripción',
+                "Monto de la Deuda": formatNumber(debt.amount),
+                "Pagos": debt.payments.map(payment => `${payment.date}: ${formatNumber(payment.amount)}`).join(', '),
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(workbook, worksheet, profile.name);
+
+            const fileName = `Deudas_${profile.name.replace(/\s+/g, '_')}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        }
+function closeModal() {
+    const modal = document.querySelector('.modal');
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (modal) modal.remove();
+    if (backdrop) backdrop.remove();
+}
+
+
+        function showConfirmation(message, onConfirm) {
+            const modal = document.createElement('div');
+            modal.classList.add('confirmation-modal');
+            modal.innerHTML = `
+                <div class="confirmation-modal-content">
+                    <p>${message}</p>
+                    <button class="confirm">Confirmar</button>
+                    <button class="cancel">Cancelar</button>
+                </div>
+            `;
+            modal.querySelector('.confirm').addEventListener('click', () => {
+                onConfirm();
+                modal.remove();
+            });
+
+            modal.querySelector('.cancel').addEventListener('click', () => {
+                modal.remove();
+            });
+
+            document.body.appendChild(modal);
+        }
+
+        // Agregar deuda
+        debtForm.addEventListener('submit', e => {
+            e.preventDefault();
+
+            const idNumber = document.getElementById('idNumber').value;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const amount = parseFloat(document.getElementById('amount').value.replace(/\./g, ''));
+            const description = document.getElementById('description').value;
+
+            if (!profiles[idNumber]) {
+                profiles[idNumber] = { idNumber, name, phone, debts: [] };
+            }
+
+            profiles[idNumber].debts.push({ amount, description, payments: [] });
+
+            updateSummary();
+            renderProfiles();
+            saveToLocalStorage();
+            debtForm.reset();
+        });
+
+        function addDebtToProfile(idNumber) {
+            const amount = parseFloat(document.getElementById('newAmount').value.replace(/\./g, ''));
+            const description = document.getElementById('newDescription').value;
+
+            showConfirmation('¿Estás seguro de que deseas agregar esta deuda?', () => {
+                profiles[idNumber].debts.push({ amount, description, payments: [] });
+                updateSummary();
+                renderProfiles();
+                saveToLocalStorage();
+                closeModal();
+            });
+        }
+
+        function makePayment(idNumber, debtIndex) {
+    const debt = profiles[idNumber].debts[debtIndex];
+
+    // Crear y mostrar el modal de abono
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>Abonar a la Deuda</h2>
+            <p>Monto restante: ${formatNumber(debt.amount)}</p>
+            <input type="text" id="paymentAmount" placeholder="Monto a abonar" required>
+            <div class="modal-actions">
+                <button id="confirmPayment">Confirmar</button>
+                <button id="cancelPayment">Cancelar</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Estilo para formatear el input mientras se escribe
+    const paymentInput = modal.querySelector('#paymentAmount');
+    paymentInput.addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    });
+
+    // Acción al confirmar el pago
+    modal.querySelector('#confirmPayment').addEventListener('click', () => {
+        const amount = parseFloat(paymentInput.value.replace(/\./g, ''));
+
+        if (!amount || amount <= 0) {
+            alert('Monto inválido.');
+            return;
+        }
+
+        if (amount > debt.amount) {
+            alert('El monto supera la deuda.');
+            return;
+        }
+
+        // Abonar el monto y registrar el pago
+        debt.amount -= amount;
+        debt.payments.push({ date: new Date().toLocaleString(), amount });
+
+        // Si la deuda queda saldada, eliminarla
+        if (debt.amount === 0) {
+            profiles[idNumber].debts.splice(debtIndex, 1);
+        }
+
+        updateSummary();
+        renderProfiles();
+        saveToLocalStorage();
+
+        // Actualizar el contenido del modal sin cerrarlo
+        modal.remove(); // Remover el modal actual
+        viewProfile(idNumber); // Volver a abrir el perfil con los datos actualizados
+    });
+
+    // Acción al cancelar el pago
+    modal.querySelector('#cancelPayment').addEventListener('click', () => {
+        modal.remove();
+    });
+}
+
+
+        function deleteDebt(idNumber, debtIndex) {
+            showConfirmation('¿Estás seguro de que deseas eliminar esta deuda?', () => {
+                profiles[idNumber].debts.splice(debtIndex, 1);
+                updateSummary();
+                renderProfiles();
+                saveToLocalStorage();
+                closeModal();
+            });
+        }
+
+        // Buscar perfiles
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            const filteredProfiles = Object.values(profiles).filter(profile => {
+                return profile.idNumber.includes(searchTerm) || profile.name.toLowerCase().includes(searchTerm);
+            });
+
+            profileList.innerHTML = '';
+
+            filteredProfiles.forEach(profile => {
+                const li = document.createElement('li');
+                li.textContent = `${profile.name} - ${profile.idNumber}`;
+                li.addEventListener('click', () => viewProfile(profile.idNumber));
+                profileList.appendChild(li);
+            });
+        });
+
+        // Formatear entrada de monto
+        document.getElementById('amount').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        });
+
+        document.addEventListener('input', e => {
+            if (e.target.id === 'newAmount') {
+                e.target.value = e.target.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+        });
+
+        // Exportar a Excel
+        exportButton.addEventListener('click', () => {
+            const workbook = XLSX.utils.book_new();
+            const data = [];
+
+            Object.values(profiles).forEach(profile => {
+                profile.debts.forEach(debt => {
+                    data.push({
+                        "Número de Cédula": profile.idNumber,
+                        "Nombre": profile.name,
+                        "Teléfono": profile.phone,
+                        "Monto de la Deuda": formatNumber(debt.amount),
+                        "Descripción": debt.description || 'Sin descripción',
+                        "Pagos": debt.payments.map(payment => `${payment.date}: ${formatNumber(payment.amount)}`).join(', ')
+                    });
+                });
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Deudas');
+
+            XLSX.writeFile(workbook, 'Deudas.xlsx');
+        });
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        document.getElementById('exportPDF').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(16);
+            doc.text("Gestion de Deudas", 105, 10, { align: "center" });
+
+            let totalDeuda = 0;
+            const data = Object.values(profiles).flatMap(profile => 
+                profile.debts.map(debt => {
+                    totalDeuda += debt.amount;
+                    return [
+                        profile.idNumber,
+                        profile.name,
+                        profile.phone,
+                        formatNumber(debt.amount),
+                        debt.description || 'Sin descripción',
+                        debt.payments.map(p => `${p.date}: ${formatNumber(p.amount)}`).join('\n')
+                    ];
+                })
+            );
+
+            doc.autoTable({
+                head: [["Cedula", "Nombre", "Telefono", "Monto", "Descripcion", "Pagos"]],
+                body: data,
+                startY: 20,
+                styles: { fontSize: 10 },
+                columnStyles: {
+                    5: { cellWidth: 'wrap' }
+                }
+            });
+
+            doc.autoTable({
+                body: [["Total de Deudas", "", "", formatNumber(totalDeuda), "", ""]],
+                startY: doc.lastAutoTable.finalY + 10,
+                styles: { fontSize: 12, fontStyle: 'bold' }
+            });
+
+            doc.save("Deudas.pdf");
+        });
+        
+function exportProfileToPDF(idNumber) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const profile = profiles[idNumber];
+
+    doc.setFontSize(16);
+    doc.text(`Deudas de ${profile.name}`, 105, 10, { align: "center" });
+    
+    let totalDeuda = 0;
+    const data = profile.debts.map(debt => {
+        totalDeuda += debt.amount;
+        return [
+            debt.description || 'Sin descripción',
+            formatNumber(debt.amount),
+            debt.payments.map(p => `${p.date}: ${formatNumber(p.amount)}`).join('\n')
+        ];
+    });
+    
+    doc.autoTable({
+        head: [["Descripcion", "Monto", "Pagos"]],
+        body: data,
+        startY: 20,
+        styles: { fontSize: 10 }
+    });
+    
+    doc.autoTable({
+        body: [["Total de Deudas", formatNumber(totalDeuda), ""]],
+        startY: doc.lastAutoTable.finalY + 10,
+        styles: { fontSize: 12, fontStyle: 'bold' }
+    });
+    
+    doc.save(`Deudas_${profile.name.replace(/\s+/g, '_')}.pdf`);
+}
+
+
+        // Inicializar
+        loadFromLocalStorage();
+        updateSummary();
+        renderProfiles();
+    </script>
+</body>
+</html>

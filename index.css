@@ -1,0 +1,488 @@
+/* estilo6.css - Clásico y Profesional */
+body {
+  font-family:'Times New Roman', Times, serif;
+  font-size: 17px;
+  background: black;
+  background-size: cover;
+  color:white;
+  margin: 0;
+  padding: 0;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+header {
+  background-color: transparent;
+  color: rgb(233, 210, 85);
+  text-align: center;
+  padding: 5px;
+  margin: 0px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 34px;
+  font-family: cursive;
+  margin: auto;
+  margin-bottom: 16px;
+}
+
+main {
+  padding: 20px;
+}
+
+header button {margin-top: 20px;}
+section {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input[type="number"] {
+  width: 98%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 2px solid #0f0f0f;
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease-in-out;
+  background:rgb(228, 219, 219); color: black;
+}
+
+input[type="number"]:focus {
+  box-shadow: 0 0 10px rgba(219, 187, 9, 0.972);
+}
+
+button {
+  padding: 10px 14px;
+  border: 1.5px solid gold;
+  border-radius: 5px;
+  background: linear-gradient(gold,black);
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: transform 0.2s;
+  ;
+}
+
+button:disabled {
+  background: linear-gradient(black, transparent);
+}
+
+button:not(:disabled):hover {
+  background-color:white
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  animation: slideIn 1s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateY(-20px);
+      opacity: 0;
+  }
+  to {
+      transform: translateY(0);
+      opacity: 1;
+  }
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+background: linear-gradient(gold,black);
+  color: rgb(255, 255, 255);
+}
+
+footer {
+  background-color: rgb(30, 25, 25);
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  background: linear-gradient(gold,black);
+}
+
+/* Estilo mejorado para la sección Precio por Kilo */
+.precio-kilo {
+  background: linear-gradient(gold,black);
+  color: white;
+  border: 2px solid #030303;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: bounceIn 1s ease-in-out, floating 3s ease-in-out infinite;
+}
+
+@keyframes bounceIn {
+  0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+  }
+  40% {
+      transform: translateY(-30px);
+  }
+  60% {
+      transform: translateY(-15px);
+  }
+}
+
+@keyframes floating {
+  0% {
+      transform: translateY(0);
+  }
+  50% {
+      transform: translateY(-10px);
+  }
+  100% {
+      transform: translateY(0);
+  }
+}
+
+.precio-kilo h2 {
+  font-size: 1.2em;
+  color: black;
+}
+
+.precio-kilo input[type="number"] {
+  width: 80%;
+  padding: 15px;
+  margin-top: 10px;
+  border: 1px solid #0e1212;
+  border-radius: 20px;
+}
+
+@media (min-width: 768px) {
+  .precio-kilo {
+      position: fixed;
+      right: 20px;
+      top: 20px;
+      width: auto;
+      max-width: none;
+      border: 3px solid black;
+  }
+}
+
+@media (max-width: 767px) {
+  .precio-kilo {
+      position: relative;
+      width: 90%;
+      margin-top: 20px;
+  }
+}
+.producto-seleccion {
+  text-align: center;
+  margin-bottom: 30px;
+  margin-top: -10px;
+  margin-left: 50px; /* Agrega esto para eliminar cualquier margen superior */
+  padding-top: 0; /* Asegúrate de que no haya relleno superior */
+}
+
+
+.producto-seleccion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.producto-seleccion-wrapper {
+  display: flex;
+  align-items: center;
+}
+.producto-seleccion-wrapper select {
+  margin-right: 10px;
+}
+#nuevo-producto-input,
+#agregar-producto {
+  margin-top: 10px;
+  display: block;
+  border: 2px solid black;
+  border-radius: 10px;
+}
+
+#nuevo-producto-nombre {border: 2px solid black;
+border-radius: 5px;}
+.trash-icon {
+  cursor: pointer;
+  color: red;
+}
+/* Estilos para el modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  color: black;
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+.modal .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.modal .close:hover,
+.modal .close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* Efectos de hover para botones */
+button:hover {
+  background:linear-gradient(black, white);
+  transition: background-color 0.3s ease-in-out;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Animación de parpadeo para el título */
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+header h1 {
+  animation: blink 2s infinite;
+}
+
+/* Efecto de desplazamiento para el header */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+header {
+  animation: slideIn 1s ease-out;
+}
+
+/* Efecto de cambio de color para los inputs */
+input[type="number"]:focus, input[type="text"]:focus {
+  border-color: #735e00;
+  transition: border-color 0.3s ease-in-out;
+}
+
+/* Animación de pulso para el botón de "Ver Registro" */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#ver-registro {
+  animation: pulse 2s infinite;
+}
+
+ /* Añadir estilo para el nuevo icono y modal */
+ .producto-seleccion-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 60px
+}
+.producto-seleccion-wrapper i {
+  margin-left: 10px;
+  cursor: pointer;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+ img{background: transparent;
+width: 35px;
+height: 26px;
+margin: auto;}
+
+h1{margin-bottom: 30px;}
+
+#precio-kilo-input{border: 2px solid black;
+padding: 5px;
+border-radius: 8px;}
+
+#nuevo-producto-nombre{margin: 5px;
+padding: 5px;}
+.abajo{font-family: cursive;}
+
+#ultimo-peso{color: gold;
+font-size:1px;}
+h3{color: gold;
+font-size: 17px;}
+
+
+/* Estilos para el select */
+#producto-select {
+  width: 100%;
+  max-width: 340px;
+  padding: 7px;
+  font-size: 16px;
+  border: 2px solid gold;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+/* Efecto al pasar el mouse */
+#producto-select:hover {
+  border-color: #6a7a8a;
+}
+
+/* Efecto al enfocar (clic en el select) */
+#producto-select:focus {
+  border-color: gold;
+  box-shadow: gold;
+  outline: none;
+}
+
+/* Estilos para las opciones */
+#producto-select option {
+  padding: 10px;
+  font-size: 16px;
+}
+/* Estilos para los iconos */
+.trash-icon {
+  color: #e74c3c;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  margin-left: 10px;
+}
+
+.trash-icon:hover {
+  color: #c0392b;
+}
+
+.add-icon {
+  color: #2ecc71;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  margin-left: 100px;
+}
+
+.add-icon:hover {
+  color: #27ae60;
+}
+
+
+#ver-registro::before {
+  content: "\f0c7";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  margin-right: 2px;
+}
+
+#finalizar-proceso::before {
+  content: "\f560";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  margin-right: 2px;
+}
+
+#reiniciar-proceso::before {
+  content: "\f021";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  margin-right: 2px;
+}
+
+#ver-deudas::before {
+  content: "\f09d";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  margin-right: 2px;
+}
+
+#regresar-pesada{margin-left: 10px;}
+#siguiente-pesada::before {
+  content: "\f101"; /* Icono de flecha hacia la derecha */
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  margin-right: 8px;
+}
+
+#regresar-pesada::before {
+  content: "\f104"; /* Icono de flecha hacia la izquierda */
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  margin-right: 8px;
+}
+#agregar-producto{margin-left: 100px;}
